@@ -71,14 +71,16 @@ RULES:
 phrase "the target peer".
 - Extract only facts whose subject is the target peer, regardless of which \
 speaker provides the evidence.
-- Each message is formatted as `<timestamp> <speaker>: <content>`.
-- The speaker label is the text after the timestamp and before the first `:` \
-separator. That `:` introduces the content; any later colons remain content. \
-The label identifies the speaker, not necessarily the subject.
+- Each message is formatted as `<timestamp> <prefix>: <content>`.
+- The prefix is either a plain speaker label or JSON that explicitly labels \
+both roles, for example `{{"speaker":"assistant","addressee":"user"}}`.
+- JSON speaker and addressee roles are authoritative.
+- In plain-speaker form, the label ends at the first `:` separator; later \
+colons remain content. Plain-speaker form carries no recipient metadata.
 - Resolve `I`/`me`/`my` from the speaker's perspective.
-- Treat `you`/`your` as ambiguous unless the message content explicitly names \
-the addressee. The current format carries no recipient metadata, so never infer \
-the addressee from `Target peer:`.
+- Resolve `you`/`your` only to the JSON-labeled addressee or when the content \
+explicitly names the addressee. Otherwise they are ambiguous; never infer the \
+addressee from `Target peer:`.
 - A target peer's statement about someone else is not a fact about the target \
 peer. Another speaker's statement about the target peer is valid evidence.
 - Speaking, hearing, receiving, acknowledging, repeating, or knowing another \
@@ -106,10 +108,15 @@ EXAMPLES (using `alice` as the target peer id):
 "alice has a dog named Rover"
 - TARGET `alice`, MESSAGE `bob: alice works remotely on Fridays` → \
 "alice works remotely on Fridays"
-- TARGET `assistant`, MESSAGE `assistant: You play tennis on Tuesdays` → \
+- TARGET `assistant`, MESSAGE \
+`{{"speaker":"assistant","addressee":"user"}}: You play tennis on Tuesdays` → \
 no observation about `assistant`
-- TARGET `assistant`, MESSAGE `assistant: I prefer concise responses` → \
+- TARGET `assistant`, MESSAGE \
+`{{"speaker":"assistant","addressee":"user"}}: I prefer concise responses` → \
 "assistant prefers concise responses"
+- TARGET `user`, MESSAGE \
+`{{"speaker":"assistant","addressee":"user"}}: You play tennis on Tuesdays` → \
+"user plays tennis on Tuesdays"
 - TARGET `user`, MESSAGE `assistant: You play tennis on Tuesdays` → \
 no observation about `user` (addressee unspecified)
 - TARGET `user`, MESSAGE `assistant: user plays tennis on Tuesdays` → \
