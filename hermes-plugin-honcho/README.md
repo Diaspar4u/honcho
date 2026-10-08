@@ -35,6 +35,19 @@ echo "HONCHO_API_KEY=***" >> ~/.hermes/.env
 > memory provider — the `honcho` subcommand is registered for the active
 > provider only. On a fresh install, use `hermes memory setup honcho`.
 
+## Configuration refresh
+
+Cached gateway agents track every recognized effective Honcho setting, including
+the active host, scoped credentials and Hermes transport defaults. Connection
+changes rebuild the SDK client and invalidate peer/session objects bound to the
+previous client. Credential fingerprints are internal cache identity, not values
+to log, serialize or expose.
+
+Explicit local `observation` or `observationMode` settings take precedence over
+existing session-peer settings. Only mismatched peers are updated, disabling
+observers before enabling replacements. Remove those local settings to leave
+observation policy managed by the Honcho UI/server instead.
+
 ## Architecture Overview
 
 ### Two-Layer Context Injection
