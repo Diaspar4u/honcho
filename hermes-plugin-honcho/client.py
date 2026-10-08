@@ -265,6 +265,7 @@ def _env_base_url() -> str | None:
     return (get_secret("HONCHO_BASE_URL", "") or "").strip() or (get_secret("HONCHO_URL", "") or "").strip() or None
 
 
+
 def _connection_fields(look: _HostLookup, host: str, path: Path) -> dict[str, Any]:
     """Resolve identity/credential/transport fields (host block -> root -> env)."""
     raw, host_block = look.raw, look.host

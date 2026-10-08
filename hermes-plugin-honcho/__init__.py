@@ -364,20 +364,20 @@ class HonchoMemoryProvider(DialecticMixin, MemoryProvider):
         # The provider is not "ready" until this method returns: background startup sets
         # _manager before get_or_create/migration/prewarm finish, and lifecycle hooks must
         # not treat that partially initialized state as usable.
-        session = self._manager.get_or_create(self._session_key)
+        self._manager.get_or_create(self._session_key)
 
         # Per-session strategy creates a fresh Honcho session every run, so a per-run
         # MEMORY.md/USER.md/SOUL.md upload would flood the backend with duplicates.
         if cfg.session_strategy == "per-session":
             logger.debug("Honcho memory file migration skipped: per-session strategy creates a fresh session per run (%s)",
                          self._session_key)
-        elif not session.messages:
+        else:
             try:
                 from hermes_constants import get_hermes_home
                 self._manager.migrate_memory_files(self._session_key, str(get_hermes_home() / "memories"))
-                logger.debug("Honcho memory file migration attempted for new session: %s", self._session_key)
+                logger.debug("Honcho memory file migration checked for session: %s", self._session_key)
             except Exception as e:
-                logger.debug("Honcho memory file migration skipped: %s", e)
+                logger.warning("Honcho memory file migration failed: %s", e)
 
         # Generic dialectic prewarm is incompatible with latest-message query rewriting,
         # which needs the first substantive user message.
