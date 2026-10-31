@@ -82,6 +82,34 @@ def test_minimal_deriver_prompt_omits_custom_instructions_when_absent() -> None:
     assert "CUSTOM INSTRUCTIONS:" not in prompt
 
 
+def test_minimal_deriver_prompt_excludes_cross_subject_self_observations() -> None:
+    created_at = datetime(2025, 6, 26, 13, 56, 0, tzinfo=UTC)
+    message = format_deriver_message(
+        0, "assistant", "assistant", created_at, "You play tennis on Tuesdays"
+    )
+    prompt = minimal_deriver_prompt(peer_id="assistant", messages=message)
+
+    assert "including with `you`/`your`" in prompt
+    assert "do not attribute that subject's facts to the target peer" in prompt
+    assert (
+        "Do not turn the transient act of saying, hearing, knowing, or repeating"
+        in prompt
+    )
+    assert "Omit any observation whose subject is ambiguous" in prompt
+    assert 'target="true"' in prompt
+    assert 'target="false"' in prompt
+
+
+def test_target_speaker_rules_preserve_static_cache_prefix() -> None:
+    alice_prompt = minimal_deriver_prompt(peer_id="alice", messages="")
+    bob_prompt = minimal_deriver_prompt(peer_id="bob", messages="")
+
+    assert (
+        alice_prompt.split("\nTarget peer:\n", maxsplit=1)[0]
+        == bob_prompt.split("\nTarget peer:\n", maxsplit=1)[0]
+    )
+
+
 def test_estimate_deriver_prompt_tokens_increases_with_custom_instructions() -> None:
     base_tokens = estimate_minimal_deriver_prompt_tokens()
     custom_tokens = estimate_deriver_prompt_tokens(

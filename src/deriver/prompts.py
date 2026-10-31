@@ -82,7 +82,10 @@ RULES:
 - Do not record conversational mechanics (greeting, thanking, acknowledging, asking or answering a question) or anything true of nearly every participant.
 - Each conclusion states exactly one independent fact. Keep a fact's reason, purpose, tool, place, and qualifiers attached to it; they are part of the same fact. Split when a conclusion joins independent facts, or when a clause adds a new fact about a person or thing.
 - Do not emit two conclusions that state the same fact in different words.
-- Properly attribute observations to the correct subject. If the target peer is referencing someone or something else, make that clear.
+- Properly attribute observations to the correct subject.
+- Resolve `I`/`me`/`my` from the labeled speaker's perspective.
+- When the target peer talks about another subject, including with `you`/`your`, do not attribute that subject's facts to the target peer. Do not turn the transient act of saying, hearing, knowing, or repeating another subject's fact into a durable fact about the target peer.
+- Omit any observation whose subject is ambiguous.
 - Write each observation for a reader who knows only the peer id: identify other people and things by their relation to this peer, and leave no pronoun, "it", "there", or relative time unresolved.
 - Include only what is needed to identify who or what the observation is about and to state the fact. Do not add explanation or background.
 
